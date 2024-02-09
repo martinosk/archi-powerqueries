@@ -1,0 +1,15 @@
+// Pivots the properties of level 2 capabilities and realising apps 
+let
+    Source = Table.NestedJoin(#"Level 2 capabilities", {"ID"}, Properties, {"ID"}, "Properties", JoinKind.Inner),
+    #"Expanded Properties" = Table.ExpandTableColumn(Source, "Properties", {"Key", "Value"}, {"Properties.Key", "Properties.Value"}),
+    #"Relations" = Table.NestedJoin(#"Expanded Properties", {"ID"}, Relations, {"Target"}, "Relations", JoinKind.Inner),
+    #"Expanded Relations" = Table.ExpandTableColumn(#"Relations", "Relations", {"ID", "Source", "Target"}, {"Relations.ID", "Relations.Source", "Relations.Target"}) ,
+    #"Applications" = Table.NestedJoin(#"Expanded Relations", {"Relations.Source"}, Elements, {"ID"}, "Apps", JoinKind.Inner),
+    #"Expanded Apps" = Table.ExpandTableColumn(Applications, "Apps", {"Type", "Name"}, {"Apps.Type", "Apps.Name"}),
+    #"Only Apps" = Table.SelectRows(#"Expanded Apps", each ([Apps.Type] = "ApplicationComponent" or [Apps.Type] = "ApplicationService")),
+    #"Realisation Scores" = Table.NestedJoin(#"Only Apps", {"Relations.ID"}, Properties, {"ID"}, "Scores", JoinKind.Inner),
+    #"Expanded Realisation Scores" = Table.ExpandTableColumn(#"Realisation Scores", "Scores", {"ID", "Key", "Value"}, {"Scores.ID", "Scores.Key", "Scores.Value"}),
+    #"Pivoted Realisation Scores" = Table.Pivot(#"Expanded Realisation Scores", List.Distinct(#"Expanded Realisation Scores"[Scores.Key]), "Scores.Key", "Scores.Value", List.Sum),
+    #"Pivoted Capability Scores" = Table.Pivot(#"Pivoted Realisation Scores", List.Distinct(#"Pivoted Realisation Scores"[Properties.Key]), "Properties.Key", "Properties.Value", List.Sum)
+in
+    #"Pivoted Capability Scores"

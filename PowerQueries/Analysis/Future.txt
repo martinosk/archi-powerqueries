@@ -1,0 +1,10 @@
+
+let
+    Source = #"Pivoted table",
+    #"Removed Columns" = Table.RemoveColumns(Source,{"ID", "Type", "Relations.ID", "Relations.Source", "Relations.Target", "Apps.Type", "Scores.ID", "Cost of change", "Cost of maintenance", "Functional Fitness score", "Level", "Rate of change"}),
+    #"Inserted Literal" = Table.AddColumn(#"Removed Columns", "Business Unit", each "Logistics", type text),
+    #"Reordered Columns" = Table.ReorderColumns(#"Inserted Literal",{"Business Unit", "Name", "Apps.Name", "Future functional fitness score", "Business differentiation", "Cost of capability evolution", "Technology evolution"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Name", "Level 2 Capability"}, {"Apps.Name", "Application/Software component"}}),
+    #"Reordered Columns1" = Table.ReorderColumns(#"Renamed Columns",{"Business Unit", "Level 2 Capability", "Cost of capability evolution", "Business differentiation", "Technology evolution", "Application/Software component", "Future functional fitness score"})
+in
+    #"Reordered Columns1"

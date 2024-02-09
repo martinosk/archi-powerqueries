@@ -1,0 +1,9 @@
+// Find "Capability" elements having a property named "Level" with the value 2. 
+// Requires that you add the property manual to all level 2 capabilities. That sucks. But traversing your way through composition/aggregation relations in the capabilitiy model was just too cumbersome.
+let
+    Source = Table.Join(Elements, {"ID"}, Properties, {"ID"}, JoinKind.Inner),
+    #"Level 2" = Source,
+    #"Filtered Rows" = Table.SelectRows(Source, each ([Key] = "Level") and ([Value] = 2)),
+    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows",{"Documentation", "Key", "Value", "Specialization"})
+in
+    #"Removed Columns"

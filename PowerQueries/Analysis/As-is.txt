@@ -1,0 +1,9 @@
+let
+    Source = #"Pivoted table",
+    #"Inserted Literal" = Table.AddColumn(Source, "Business Unit", each "Logistics", type text),
+    #"Removed Columns" = Table.RemoveColumns(#"Inserted Literal",{"ID", "Type", "Relations.ID", "Relations.Source", "Relations.Target", "Apps.Type", "Scores.ID", "Technology evolution", "Cost of capability evolution", "Business differentiation", "Level", "Future functional fitness score"}),
+    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Business Unit", "Name", "Rate of change", "Apps.Name", "Functional Fitness score", "Cost of change", "Cost of maintenance"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Name", "Level 2 Capability"}, {"Apps.Name", "Application/software component"}}),
+    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each ([#"Application/software component"] <> "N/A"))
+in
+    #"Filtered Rows"

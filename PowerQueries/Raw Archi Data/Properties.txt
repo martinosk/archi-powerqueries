@@ -1,0 +1,8 @@
+let
+    Source = Csv.Document(File.Contents("C:\Users\maosk\OneDrive - DFDS\Documents\Logistics EA\Archi\properties.csv"),[Delimiter=";", Columns=3, Encoding=1252, QuoteStyle=QuoteStyle.Csv]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ID", type text}, {"Key", type text}, {"Value", type any}}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Changed Type",{{"Value", Int64.Type}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type1", each ([Key] <> "" and [Key] <> "Access_Type" and [Key] <> "Commercial availability" and [Key] <> "Complexity" and [Key] <> "Directed" and [Key] <> "Owner" and [Key] <> "Source" and [Key] <> "Tags"))
+in
+    #"Filtered Rows"

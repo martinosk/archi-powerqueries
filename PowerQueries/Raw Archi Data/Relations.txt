@@ -1,0 +1,7 @@
+let
+    Source = Csv.Document(File.Contents("C:\Users\maosk\OneDrive - DFDS\Documents\Logistics EA\Archi\relations.csv"),[Delimiter=";", Columns=7, Encoding=1252, QuoteStyle=QuoteStyle.Csv]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ID", type text}, {"Type", type text}, {"Name", type text}, {"Documentation", type text}, {"Source", type text}, {"Target", type text}, {"Specialization", type text}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each ([Type] = "RealizationRelationship"))
+in
+    #"Filtered Rows"
